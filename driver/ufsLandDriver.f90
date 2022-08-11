@@ -7,6 +7,7 @@ program ufsLandDriver
   use NamelistRead
   use ufsLandStaticModule, only  : static_type
   use ufsLandForcingModule, only : forcing_type
+  use module_mpi_land, only: mpi_land_init, mpi_land_type, mpi_land_finalize
 
   implicit none
   
@@ -15,11 +16,20 @@ program ufsLandDriver
   type (namelist_type) :: namelist
   type (static_type)   :: static
   type (forcing_type)  :: forcing
+  type (mpi_land_type) :: mpi_land
   
   integer, parameter :: NOAH_LAND_SURFACE_MODEL = 1
   integer, parameter :: NOAHMP_LAND_SURFACE_MODEL = 2
 
   call namelist%ReadNamelist()
+  
+  call mpi_land_init(namelist%location_length,mpi_land)
+  
+  print*, 'numprocs: ',mpi_land%numprocs
+
+  print*, 'full:', mpi_land%my_id,namelist%location_length
+  
+  print*, 'range:', mpi_land%my_id,mpi_land%location_begin,mpi_land%location_end
   
   namelist%subset_start  = namelist%location_start
   namelist%subset_end    = namelist%location_end
@@ -49,5 +59,7 @@ program ufsLandDriver
 
   end select land_model
    
+  call mpi_land_finalize()
+  
 end program
 
