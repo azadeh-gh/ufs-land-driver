@@ -29,11 +29,11 @@ program ufsLandDriver
 
   print*, 'full:', mpi_land%my_id,namelist%location_length
   
-  print*, 'range:', mpi_land%my_id,mpi_land%location_begin,mpi_land%location_end
+  print*, 'range:', mpi_land%my_id,mpi_land%location_start,mpi_land%location_end
   
-  namelist%subset_start  = namelist%location_start
-  namelist%subset_end    = namelist%location_end
-  namelist%subset_length = namelist%location_end - namelist%location_start + 1
+  namelist%subset_start  = mpi_land%location_start
+  namelist%subset_end    = mpi_land%location_end
+  namelist%subset_length = mpi_land%location_end - mpi_land%location_start + 1
   
   land_model : select case(namelist%land_model)
   

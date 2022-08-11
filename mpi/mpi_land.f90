@@ -9,7 +9,7 @@ module module_mpi_land
     integer :: numprocs
     integer :: global_nlocations
     integer :: local_nlocations
-    integer :: location_begin
+    integer :: location_start
     integer :: location_end
   end type
   
@@ -23,7 +23,7 @@ module module_mpi_land
     type(mpi_land_type) :: mpiland
     integer             :: ierr
     logical             :: mpi_inited
-    integer             :: i, overlap, location_begin_shift
+    integer             :: i, overlap, location_start_shift
 
     call mpi_initialized( mpi_inited, ierr )
     if ( .not. mpi_inited ) then
@@ -36,11 +36,11 @@ module module_mpi_land
     mpiland%global_nlocations = global_nlocations_in
 
     mpiland%local_nlocations = int(mpiland%global_nlocations / mpiland%numprocs)
-    mpiland%location_begin = mpiland%local_nlocations * mpiland%my_id + 1 
+    mpiland%location_start = mpiland%local_nlocations * mpiland%my_id + 1 
 
     overlap = mod(mpiland%global_nlocations, mpiland%numprocs)
 
-    location_begin_shift = 0
+    location_start_shift = 0
 
     if(overlap /= 0) then
       do i = 0, overlap - 1
@@ -49,16 +49,16 @@ module module_mpi_land
           mpiland%local_nlocations = mpiland%local_nlocations + 1
         end if
  
-        if(mpiland%my_id > i ) then  ! for the overlap procs shift the begin locations
-          location_begin_shift = location_begin_shift + 1
+        if(mpiland%my_id > i ) then  ! for the overlap procs shift the start locations
+          location_start_shift = location_start_shift + 1
         end if
 
       end do
     end if
 
-    mpiland%location_begin = mpiland%location_begin + location_begin_shift
+    mpiland%location_start = mpiland%location_start + location_start_shift
         
-    mpiland%location_end = mpiland%location_begin + mpiland%local_nlocations - 1
+    mpiland%location_end = mpiland%location_start + mpiland%local_nlocations - 1
 
     call mpi_land_sync()
 
