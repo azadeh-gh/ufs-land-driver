@@ -25,12 +25,6 @@ program ufsLandDriver
   
   call mpi_land_init(namelist%location_length,mpi_land)
   
-  print*, 'numprocs: ',mpi_land%numprocs
-
-  print*, 'full:', mpi_land%my_id,namelist%location_length
-  
-  print*, 'range:', mpi_land%my_id,mpi_land%location_start,mpi_land%location_end
-  
   namelist%subset_start  = mpi_land%location_start
   namelist%subset_end    = mpi_land%location_end
   namelist%subset_length = mpi_land%location_end - mpi_land%location_start + 1
